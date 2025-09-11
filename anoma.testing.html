@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prototipe Anoma Testnet</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827;
+            color: #ffffff;
+            /* New background pattern */
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 10px), repeating-linear-gradient(-45deg, rgba(255,255,255,0.05) 0, rgba(255,255,255,0.05) 1px, transparent 1px, transparent 10px);
+        }
+        .card {
+            background-color: #1f2937;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        .logo-container {
+            padding: 16px;
+            border-radius: 50%;
+            background-color: #1f2937;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+        }
+    </style>
+</head>
+<body class="bg-[#080808] text-white min-h-screen flex items-center justify-center p-4 relative">
+    
+    <div id="app" class="w-full max-w-2xl z-10">
+        <!-- Gambar Icosahedron dalam format SVG -->
+        <div class="flex justify-center mb-6">
+            <svg class="w-32 h-32 md:w-48 md:h-48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Outer lines -->
+                <polygon points="50,15 85,35 85,65 50,85 15,65 15,35" stroke="white" stroke-width="2" fill="none" />
+                <!-- Inner lines -->
+                <line x1="50" y1="15" x2="50" y2="85" stroke="white" stroke-width="2" />
+                <line x1="15" y1="35" x2="85" y2="65" stroke="white" stroke-width="2" />
+                <line x1="15" y1="65" x2="85" y2="35" stroke="white" stroke-width="2" />
+                <!-- Shaded polygons -->
+                <polygon points="50,15 85,35 50,50" fill="url(#red-gradient)" />
+                <polygon points="50,50 85,35 85,65 50,85" fill="url(#red-gradient)" />
+                <!-- Red gradient definition -->
+                <defs>
+                    <linearGradient id="red-gradient" x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%" style="stop-color:#ff0000" />
+                        <stop offset="100%" style="stop-color:#b30000" />
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700 mb-2">Intent-Centric</h1>
+            <p class="text-slate-400">Designing User Intent-Oriented Systems.</p>
+        </header>
+
+        <!-- Status & Notifikasi -->
+        <div id="status-message" class="card text-center text-sm py-3 mb-6 hidden"></div>
+
+        <!-- Bagian Koneksi Dompet -->
+        <div id="wallet-section" class="card mb-6">
+            <h2 class="text-xl font-semibold mb-4">Wallet Status</h2>
+            <div id="connect-container" class="flex flex-col items-center">
+                <button id="connect-button" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-full transition-all duration-300 transform hover:scale-105">
+                    Connect Wallet
+                </button>
+                <span class="text-slate-400 mt-3 text-sm">Click to simulate connection.</span>
+            </div>
+            <div id="connected-container" class="hidden">
+                <p class="flex items-center text-slate-400 mb-2">
+                    Status: <span class="ml-2 text-green-400 font-medium">Connected</span>
+                </p>
+                <p class="flex items-center text-slate-400">
+                    Wallet Address: <span id="wallet-address" class="ml-2 text-cyan-400 font-mono text-sm break-all"></span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Bagian Informasi Saldo -->
+        <div id="balance-section" class="card mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Account Balance</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="bg-[#2a2a2a] p-4 rounded-lg flex flex-col justify-between">
+                    <p class="text-slate-400 text-sm">ANOMA Balance</p>
+                    <p class="text-3xl font-bold mt-1 text-red-400" id="anoma-balance">0</p>
+                </div>
+                <div class="bg-[#2a2a2a] p-4 rounded-lg flex flex-col justify-between">
+                    <p class="text-slate-400 text-sm">NAM Token Balance</p>
+                    <p class="text-3xl font-bold mt-1 text-red-400" id="nam-balance">0</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bagian Transaksi -->
+        <div id="transaction-section" class="card hidden">
+            <h2 class="text-xl font-semibold mb-4">Send NAM Tokens</h2>
+            <form id="transaction-form" class="space-y-4">
+                <div>
+                    <label for="recipient" class="block text-sm font-medium text-slate-400 mb-1">Recipient Address</label>
+                    <input type="text" id="recipient" placeholder="0x..." required class="w-full bg-[#2a2a2a] text-white p-3 rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-500">
+                </div>
+                <div>
+                    <label for="amount" class="block text-sm font-medium text-slate-400 mb-1">Amount (NAM)</label>
+                    <input type="number" id="amount" placeholder="0.0" step="0.01" required class="w-full bg-[#2a2a2a] text-white p-3 rounded-lg border border-slate-600 focus:outline-none focus:ring-2 focus:ring-red-500 placeholder-slate-500">
+                </div>
+                <button type="submit" id="send-button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-full transition-colors duration-200">
+                    Send Transaction
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Menginisialisasi variabel DOM
+        const app = document.getElementById('app');
+        const connectButton = document.getElementById('connect-button');
+        const connectContainer = document.getElementById('connect-container');
+        const connectedContainer = document.getElementById('connected-container');
+        const walletAddressSpan = document.getElementById('wallet-address');
+        const anomaBalanceSpan = document.getElementById('anoma-balance');
+        const namBalanceSpan = document.getElementById('nam-balance');
+        const balanceSection = document.getElementById('balance-section');
+        const transactionSection = document.getElementById('transaction-section');
+        const transactionForm = document.getElementById('transaction-form');
+        const statusMessage = document.getElementById('status-message');
+        const sendButton = document.getElementById('send-button');
+        
+        // Menginisialisasi state aplikasi
+        let isConnected = false;
+        let walletAddress = '';
+        let anomaBalance = 1000;
+        let namBalance = 500;
+
+        // Fungsi untuk menampilkan pesan status
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.classList.remove('hidden', 'bg-red-500', 'bg-green-500', 'bg-blue-500');
+            if (type === 'success') {
+                statusMessage.classList.add('bg-green-500', 'text-white');
+            } else if (type === 'error') {
+                statusMessage.classList.add('bg-red-500', 'text-white');
+            } else {
+                statusMessage.classList.add('bg-blue-500', 'text-white');
+            }
+            statusMessage.classList.add('block');
+            setTimeout(() => {
+                statusMessage.classList.remove('block');
+                statusMessage.classList.add('hidden');
+            }, 5000);
+        }
+
+        // Fungsi untuk memperbarui UI berdasarkan state
+        function updateUI() {
+            if (isConnected) {
+                connectContainer.classList.add('hidden');
+                connectedContainer.classList.remove('hidden');
+                balanceSection.classList.remove('hidden');
+                transactionSection.classList.remove('hidden');
+                walletAddressSpan.textContent = walletAddress;
+            } else {
+                connectContainer.classList.remove('hidden');
+                connectedContainer.classList.add('hidden');
+                balanceSection.classList.add('hidden');
+                transactionSection.classList.add('hidden');
+            }
+            anomaBalanceSpan.textContent = anomaBalance.toFixed(2);
+            namBalanceSpan.textContent = namBalance.toFixed(2);
+        }
+
+        // Event listener untuk tombol "Hubungkan Dompet"
+        connectButton.addEventListener('click', () => {
+            showStatus('Connecting to wallet...', 'info');
+            setTimeout(() => {
+                // Mensimulasikan koneksi yang berhasil
+                isConnected = true;
+                walletAddress = 'anoma1' + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+                showStatus('Connection successful!', 'success');
+                updateUI();
+            }, 1500);
+        });
+
+        // Event listener untuk form transaksi
+        transactionForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const recipient = document.getElementById('recipient').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            if (amount <= 0 || isNaN(amount)) {
+                showStatus('Invalid amount.', 'error');
+                return;
+            }
+
+            if (amount > namBalance) {
+                showStatus('Insufficient balance.', 'error');
+                return;
+            }
+            
+            // Nonaktifkan tombol saat transaksi sedang diproses
+            sendButton.disabled = true;
+            sendButton.textContent = 'Processing...';
+
+            showStatus('Sending transaction...', 'info');
+
+            setTimeout(() => {
+                // Mensimulasikan transaksi berhasil
+                namBalance -= amount;
+                updateUI();
+                showStatus(`Transaction successful! Sent ${amount.toFixed(2)} NAM to ${recipient}`, 'success');
+                
+                // Reset form dan aktifkan kembali tombol
+                transactionForm.reset();
+                sendButton.disabled = false;
+                sendButton.textContent = 'Send Transaction';
+            }, 2500);
+        });
+
+        // Panggil updateUI() pada saat pertama kali dimuat
+        updateUI();
+
+    </script>
+</body>
+</html>
