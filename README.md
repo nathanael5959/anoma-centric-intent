@@ -1,3 +1,7 @@
+# To access the Prototype I created please visit the link below
+
+https://anoma-centric-intent.vercel.app/
+
 # 🌌 Anoma Testnet Prototype
 _A simple web3 prototype simulating the core functionalities of the Anoma Testnet._
 
