@@ -44,5 +44,5 @@ Today's blockchain applications are often complex and difficult to navigate. Thi
 ### ⚡ Getting Started
 
 1.  **Clone** this repository to your local machine.
-2.  Open the `anoma.testing.html` file directly in your web browser.
+2.  Open the `index.html` file directly in your web browser.
 3.  Click the **Connect Wallet** button to see the prototype in action.
